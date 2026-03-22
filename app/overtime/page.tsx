@@ -2,6 +2,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { signOutAction } from "@/app/login/actions";
+import { SubmitButton } from "@/components/ui/submit-button";
+import { ToastMessage } from "@/components/ui/toast-message";
 import { createClient } from "@/lib/supabase/server";
 
 import { submitOvertimeRequestAction } from "./actions";
@@ -97,11 +99,7 @@ export default async function OvertimePage({
             </form>
           </div>
 
-          {message ? (
-            <div className="mt-6 rounded-[1.4rem] border border-dashed border-accent/40 bg-[#f6f1e5] p-4 text-sm leading-7 text-foreground">
-              {message}
-            </div>
-          ) : null}
+          {message ? <ToastMessage message={message} /> : null}
         </div>
 
         <section className="rounded-[1.6rem] border border-line bg-[#f3ecdf] p-5">
@@ -149,12 +147,11 @@ export default async function OvertimePage({
                 className="w-full rounded-2xl border border-line bg-white px-4 py-3 outline-none transition focus:border-accent"
               />
             </label>
-            <button
-              type="submit"
+            <SubmitButton
+              label="Gui don tang ca"
+              pendingLabel="Dang gui don tang ca..."
               className="w-full rounded-full bg-accent px-5 py-3 font-semibold text-white transition hover:bg-accent-strong"
-            >
-              Gui don tang ca
-            </button>
+            />
           </form>
         </section>
       </section>

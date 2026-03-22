@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { signOutAction } from "@/app/login/actions";
+import { ToastMessage } from "@/components/ui/toast-message";
 import { detectAttendanceMode } from "@/lib/attendance";
 import { createClient } from "@/lib/supabase/server";
 
@@ -145,11 +146,7 @@ export default async function TodayPage({ searchParams }: TodayPageProps) {
             </form>
           </div>
 
-          {message ? (
-            <div className="mt-6 rounded-[1.4rem] border border-dashed border-accent/40 bg-[#f6f1e5] p-4 text-sm leading-7 text-foreground">
-              {message}
-            </div>
-          ) : null}
+          {message ? <ToastMessage message={message} /> : null}
 
           <div className="mt-6 grid gap-4 md:grid-cols-2">
             <article className="rounded-[1.4rem] border border-line bg-[#faf7f0] p-5">

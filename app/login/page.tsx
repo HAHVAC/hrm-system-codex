@@ -1,5 +1,8 @@
 import Link from "next/link";
 
+import { SubmitButton } from "@/components/ui/submit-button";
+import { ToastMessage } from "@/components/ui/toast-message";
+
 import { signInAction } from "./actions";
 
 type LoginPageProps = {
@@ -55,11 +58,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
             </p>
           </div>
 
-          {message ? (
-            <div className="mt-6 rounded-[1.25rem] border border-dashed border-alert/40 bg-[#fff2eb] p-4 text-sm leading-7 text-alert">
-              {message}
-            </div>
-          ) : null}
+          {message ? <ToastMessage message={message} /> : null}
 
           <form action={signInAction} className="mt-8 space-y-5">
             <label className="block space-y-2">
@@ -82,12 +81,11 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
                 className="w-full rounded-2xl border border-line bg-[#fbf8f1] px-4 py-3 outline-none transition focus:border-accent"
               />
             </label>
-            <button
-              type="submit"
+            <SubmitButton
+              label="Dang nhap"
+              pendingLabel="Dang dang nhap..."
               className="w-full rounded-full bg-accent px-5 py-3 font-semibold text-white transition hover:bg-accent-strong"
-            >
-              Dang nhap
-            </button>
+            />
           </form>
 
           <div className="mt-6 rounded-[1.25rem] border border-dashed border-accent/30 bg-[#f8f3e8] p-4">

@@ -44,6 +44,25 @@ export async function submitLeaveRequestAction(formData: FormData) {
     redirect(toLeaveMessage("Ngay bat dau khong duoc sau ngay ket thuc."));
   }
 
+  const overlapQuery = await supabase
+    .from("leave_requests")
+    .select("id")
+    .eq("employee_id", user.id)
+    .in("status", ["pending", "approved"])
+    .lte("start_date", endDate)
+    .gte("end_date", startDate)
+    .limit(1);
+
+  if (overlapQuery.error) {
+    redirect(toLeaveMessage("Khong the kiem tra don nghi trung lich. Hay thu lai."));
+  }
+
+  if ((overlapQuery.data?.length ?? 0) > 0) {
+    redirect(
+      toLeaveMessage("Da ton tai don nghi trung khoang ngay (pending/approved)."),
+    );
+  }
+
   const insertResult = await supabase.from("leave_requests").insert({
     employee_id: user.id,
     leave_type: leaveType,
@@ -104,10 +123,19 @@ export async function reviewLeaveRequestAction(formData: FormData) {
       reviewed_at: new Date().toISOString(),
       review_note: reviewNote || null,
     })
-    .eq("id", requestId);
+    .eq("id", requestId)
+    .eq("status", "pending")
+    .select("id")
+    .maybeSingle();
 
   if (updateResult.error) {
     redirect(toApprovalsMessage("Cap nhat trang thai don nghi that bai."));
+  }
+
+  if (!updateResult.data) {
+    redirect(
+      toApprovalsMessage("Don nghi da duoc duyet truoc do hoac khong ton tai."),
+    );
   }
 
   const logResult = await supabase.from("approval_logs").insert({

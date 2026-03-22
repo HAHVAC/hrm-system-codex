@@ -2,6 +2,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { signOutAction } from "@/app/login/actions";
+import { SubmitButton } from "@/components/ui/submit-button";
+import { ToastMessage } from "@/components/ui/toast-message";
 import { createClient } from "@/lib/supabase/server";
 
 import {
@@ -114,11 +116,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
           </div>
         </div>
 
-        {message ? (
-          <div className="mt-6 rounded-[1.4rem] border border-dashed border-accent/40 bg-[#f6f1e5] p-4 text-sm leading-7 text-foreground">
-            {message}
-          </div>
-        ) : null}
+        {message ? <ToastMessage message={message} /> : null}
       </section>
 
       <section className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
@@ -181,12 +179,11 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                 className="w-full rounded-2xl border border-line bg-[#faf7f0] px-4 py-3 outline-none transition focus:border-accent"
               />
             </label>
-            <button
-              type="submit"
+            <SubmitButton
+              label="Tao cong truong"
+              pendingLabel="Dang tao..."
               className="w-full rounded-full bg-accent px-5 py-3 font-semibold text-white transition hover:bg-accent-strong"
-            >
-              Tao cong truong
-            </button>
+            />
           </form>
 
           <div className="mt-8 space-y-4">
@@ -250,12 +247,11 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                       <option value="manager">manager</option>
                       <option value="admin">admin</option>
                     </select>
-                    <button
-                      type="submit"
+                    <SubmitButton
+                      label="Cap nhat role"
+                      pendingLabel="Dang cap nhat..."
                       className="rounded-full bg-accent px-5 py-3 font-semibold text-white transition hover:bg-accent-strong"
-                    >
-                      Cap nhat role
-                    </button>
+                    />
                   </form>
                 </article>
               ))}
@@ -312,12 +308,11 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                 <option value="true">primary</option>
                 <option value="false">secondary</option>
               </select>
-              <button
-                type="submit"
+              <SubmitButton
+                label="Gan"
+                pendingLabel="Dang gan..."
                 className="rounded-full bg-accent px-5 py-3 font-semibold text-white transition hover:bg-accent-strong"
-              >
-                Gan
-              </button>
+              />
             </form>
 
             <div className="mt-6 space-y-4">

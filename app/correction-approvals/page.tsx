@@ -2,6 +2,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { signOutAction } from "@/app/login/actions";
+import { SubmitButton } from "@/components/ui/submit-button";
+import { ToastMessage } from "@/components/ui/toast-message";
 import { createClient } from "@/lib/supabase/server";
 
 import { reviewCorrectionRequestAction } from "@/app/corrections/actions";
@@ -125,11 +127,7 @@ export default async function CorrectionApprovalsPage({
           </div>
         </div>
 
-        {message ? (
-          <div className="mt-6 rounded-[1.4rem] border border-dashed border-accent/40 bg-[#f6f1e5] p-4 text-sm leading-7 text-foreground">
-            {message}
-          </div>
-        ) : null}
+        {message ? <ToastMessage message={message} /> : null}
       </section>
 
       <section className="grid gap-4">
@@ -197,22 +195,20 @@ export default async function CorrectionApprovalsPage({
                       className="w-full rounded-2xl border border-line bg-white px-4 py-3 outline-none transition focus:border-accent"
                     />
                   </label>
-                  <button
-                    type="submit"
+                  <SubmitButton
+                    label="Approve"
+                    pendingLabel="Dang xu ly..."
                     name="decision"
                     value="approved"
                     className="rounded-full bg-accent px-5 py-3 font-semibold text-white transition hover:bg-accent-strong"
-                  >
-                    Approve
-                  </button>
-                  <button
-                    type="submit"
+                  />
+                  <SubmitButton
+                    label="Reject"
+                    pendingLabel="Dang xu ly..."
                     name="decision"
                     value="rejected"
                     className="rounded-full bg-alert px-5 py-3 font-semibold text-white transition hover:opacity-90"
-                  >
-                    Reject
-                  </button>
+                  />
                 </form>
               </article>
             );

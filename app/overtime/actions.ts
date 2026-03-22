@@ -80,6 +80,24 @@ export async function submitOvertimeRequestAction(formData: FormData) {
     redirect(toOvertimeMessage("Ban chua duoc gan cong truong de xin tang ca."));
   }
 
+  const overlapQuery = await supabase
+    .from("overtime_requests")
+    .select("id")
+    .eq("employee_id", user.id)
+    .eq("request_date", requestDate)
+    .in("status", ["pending", "approved"])
+    .lt("start_time", endIso)
+    .gt("end_time", startIso)
+    .limit(1);
+
+  if (overlapQuery.error) {
+    redirect(toOvertimeMessage("Khong the kiem tra don tang ca trung gio. Hay thu lai."));
+  }
+
+  if ((overlapQuery.data?.length ?? 0) > 0) {
+    redirect(toOvertimeMessage("Da ton tai don tang ca trung khung gio (pending/approved)."));
+  }
+
   const insertResult = await supabase.from("overtime_requests").insert({
     employee_id: user.id,
     worksite_id: assignmentQuery.data.worksite_id,
@@ -142,10 +160,19 @@ export async function reviewOvertimeRequestAction(formData: FormData) {
       reviewed_at: new Date().toISOString(),
       review_note: reviewNote || null,
     })
-    .eq("id", requestId);
+    .eq("id", requestId)
+    .eq("status", "pending")
+    .select("id")
+    .maybeSingle();
 
   if (updateResult.error) {
     redirect(toApprovalsMessage("Cap nhat trang thai don tang ca that bai."));
+  }
+
+  if (!updateResult.data) {
+    redirect(
+      toApprovalsMessage("Don tang ca da duoc duyet truoc do hoac khong ton tai."),
+    );
   }
 
   const logResult = await supabase.from("approval_logs").insert({

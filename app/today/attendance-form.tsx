@@ -2,6 +2,8 @@
 
 import { useMemo, useState } from "react";
 
+import { SubmitButton } from "@/components/ui/submit-button";
+
 import { submitAttendanceAction } from "./actions";
 
 type AttendanceFormProps = {
@@ -128,13 +130,12 @@ export function AttendanceForm({
         />
       </label>
 
-      <button
-        type="submit"
+      <SubmitButton
         disabled={!canSubmitForm}
+        label={expectedActionLabel}
+        pendingLabel="Dang gui cham cong..."
         className="w-full rounded-full bg-accent px-5 py-3 font-semibold text-white transition enabled:hover:bg-accent-strong disabled:cursor-not-allowed disabled:bg-accent/40"
-      >
-        {expectedActionLabel}
-      </button>
+      />
 
       {!canSubmit ? (
         <p className="text-sm leading-7 text-alert">

@@ -51,6 +51,27 @@ export async function submitCorrectionRequestAction(formData: FormData) {
     redirect(toCorrectionsMessage("Ban ghi cham cong khong hop le."));
   }
 
+  const duplicatePendingQuery = await supabase
+    .from("correction_requests")
+    .select("id")
+    .eq("employee_id", user.id)
+    .eq("attendance_record_id", attendanceRecordId)
+    .eq("request_type", requestType)
+    .eq("status", "pending")
+    .limit(1);
+
+  if (duplicatePendingQuery.error) {
+    redirect(toCorrectionsMessage("Khong the kiem tra yeu cau trung. Hay thu lai."));
+  }
+
+  if ((duplicatePendingQuery.data?.length ?? 0) > 0) {
+    redirect(
+      toCorrectionsMessage(
+        "Da co yeu cau chinh cong cung loai dang pending cho ban ghi nay.",
+      ),
+    );
+  }
+
   const insertResult = await supabase.from("correction_requests").insert({
     employee_id: user.id,
     attendance_record_id: attendanceRecordId,
@@ -111,10 +132,19 @@ export async function reviewCorrectionRequestAction(formData: FormData) {
       reviewed_at: new Date().toISOString(),
       review_note: reviewNote || null,
     })
-    .eq("id", requestId);
+    .eq("id", requestId)
+    .eq("status", "pending")
+    .select("id")
+    .maybeSingle();
 
   if (updateResult.error) {
     redirect(toApprovalsMessage("Cap nhat trang thai yeu cau chinh cong that bai."));
+  }
+
+  if (!updateResult.data) {
+    redirect(
+      toApprovalsMessage("Yeu cau chinh cong da duoc duyet truoc do hoac khong ton tai."),
+    );
   }
 
   const logResult = await supabase.from("approval_logs").insert({
